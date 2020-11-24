@@ -22,7 +22,7 @@ public class NivelController {
     private IGenericService<Nivel> service;
 
     @RequestMapping(method = RequestMethod.POST)
-    @PreAuthorize("hasPermission('hasAccess','ADMINISTRADOR','ESTUDIANTE')")
+    @PreAuthorize("hasAnyAuthority('hasAccess','ADMINISTRADOR','TUTOR')")
     public ResponseEntity<Nivel> create(@RequestBody Nivel Nivel) throws ResourceFoundException, ResourceNotFoundException {
         return new ResponseEntity<>(service.create(Nivel), HttpStatus.OK);
     }
@@ -44,7 +44,7 @@ public class NivelController {
     }
 
     @GetMapping("/findAll")
-    @PreAuthorize("hasPermission('hasAccess','ESTUDIANTE')")
+    @PreAuthorize("hasAnyAuthority('TUTOR','ESTUDIANTE')")
     public ResponseEntity<Iterable<Nivel>> findAll() {
         return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
     }

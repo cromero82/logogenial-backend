@@ -5,6 +5,7 @@ import com.rc.logogenial.basicadminservice.entity.Usuario;
 import com.rc.logogenial.basicadminservice.exception.ResourceFoundException;
 import com.rc.logogenial.basicadminservice.exception.ResourceNotFoundException;
 import com.rc.logogenial.basicadminservice.exception.UnauthorizedRequestException;
+import com.rc.logogenial.basicadminservice.model.dto.UsuarioDto;
 import com.rc.logogenial.basicadminservice.model.shared.ResultSearchData;
 import com.rc.logogenial.basicadminservice.service.IGenericService;
 import com.rc.logogenial.basicadminservice.service.IUsuarioService;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +26,7 @@ import java.util.stream.Collectors;
 public class UsuarioController {
 
     @Autowired
-    private IUsuarioService<Usuario> usuarioService;
+    private IUsuarioService<Usuario, UsuarioDto> usuarioService;
 
     @GetMapping(value = "/health")
     public ResponseEntity<String> health() {
@@ -34,6 +36,12 @@ public class UsuarioController {
     @PostMapping("/create")
     public ResponseEntity<Usuario> create(@RequestBody Usuario usuario) throws ResourceFoundException, ResourceNotFoundException {
         return new ResponseEntity<>(usuarioService.create(usuario), HttpStatus.OK);
+    }
+
+    @PostMapping("/createSecure")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRADOR')")
+    public ResponseEntity<UsuarioDto> createSecure(@RequestBody UsuarioDto usuario) throws ResourceFoundException, ResourceNotFoundException {
+        return new ResponseEntity<>(usuarioService.createSecure(usuario), HttpStatus.OK);
     }
 
     @GetMapping("/findById")

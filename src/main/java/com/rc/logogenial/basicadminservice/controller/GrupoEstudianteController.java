@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +30,7 @@ public class GrupoEstudianteController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('ADMINISTRADOR')")
     public ResponseEntity<GrupoEstudiante> create(@RequestBody GrupoEstudiante grupoEstudiante) throws ResourceFoundException, ResourceNotFoundException {
         return new ResponseEntity<>(service.create(grupoEstudiante), HttpStatus.OK);
     }
@@ -39,11 +41,13 @@ public class GrupoEstudianteController {
     }
 
     @PutMapping("")
+    @PreAuthorize("hasAnyAuthority('hasAccess','ADMINISTRADOR')")
     public ResponseEntity<GrupoEstudiante> update(@RequestBody GrupoEstudiante Niveles) throws ResourceNotFoundException {
         return new ResponseEntity<>(service.update(Niveles), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRADOR')")
     public ResponseEntity<Object> delete(@PathVariable("id") int id) throws ResourceNotFoundException {
         service.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);
